@@ -4,7 +4,7 @@
   <meta charset="utf-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, height=device-height, initial-scale=1, user-scalable=no">
-  <meta name="generator" content="made with love by dartdoc 4.1.0">
+  <meta name="generator" content="made with love by dartdoc 6.0.0">
   <meta name="description" content="rohd API docs, for the Dart programming language.">
   <title>rohd - Dart API docs</title>
 
@@ -22,8 +22,7 @@
 </head>
 
 
-<body data-base-href=""
-      data-using-base-href="false">
+<body data-base-href="" data-using-base-href="false">
 
 <div id="overlay-under-drawer"></div>
 
@@ -44,8 +43,9 @@
   <div id="dartdoc-main-content" class="main-content">
       
 <section class="desc markdown">
-  <p><a href="https://github.com/intel/rohd/actions/workflows/test.yml"><img src="https://github.com/intel/rohd/actions/workflows/test.yml/badge.svg" alt="Tests"></a>
-<a href="https://intel.github.io/rohd/rohd/rohd-library.html"><img src="https://github.com/intel/rohd/actions/workflows/docs.yml/badge.svg" alt="Docs"></a>
+  <p><a href="https://github.com/intel/rohd/actions/workflows/general.yml"><img src="https://github.com/intel/rohd/actions/workflows/general.yml/badge.svg?event=push" alt="Tests"></a>
+<a href="https://intel.github.io/rohd/rohd/rohd-library.html"><img src="https://img.shields.io/badge/API%20Docs-generated-success" alt="API Docs"></a>
+<a href="https://discord.gg/jubxF84yGw"><img src="https://img.shields.io/discord/1001179329411166267?label=Chat" alt="Chat"></a>
 <a href="https://github.com/intel/rohd/blob/main/LICENSE"><img src="https://img.shields.io/badge/License-BSD--3-blue" alt="License"></a>
 <a href="https://github.com/intel/rohd/blob/main/CODE_OF_CONDUCT.md"><img src="https://img.shields.io/badge/Contributor%20Covenant-1.4-4baaaa.svg" alt="Contributor Covenant"></a></p>
 <h1 id="rapid-open-hardware-development-rohd-framework">Rapid Open Hardware Development (ROHD) Framework</h1>
@@ -109,7 +109,7 @@
 <pre class="language-dart"><code class="language-dart">import 'package:rohd/rohd.dart';
 </code></pre>
 <p>There are complete API docs available at <a href="https://intel.github.io/rohd/rohd/rohd-library.html">https://intel.github.io/rohd/rohd/rohd-library.html</a>.</p>
-<p>If you need some help, you can visit our <a href="https://github.com/intel/rohd/discussions">Discussions</a> page.  This is a friendly place where you can ask questions, share ideas, or just discuss openly!  You could also head to <a href="https://stackoverflow.com/">StackOverflow.com</a> (use the tag <code>rohd</code>) to ask questions or look for answers.</p>
+<p>If you need some help, you can join the <a href="https://discord.com/invite/jubxF84yGw">Discord server</a> or visit our <a href="https://github.com/intel/rohd/discussions">Discussions</a> page.  These are friendly places where you can ask questions, share ideas, or just discuss openly!  You could also head to <a href="https://stackoverflow.com/">StackOverflow.com</a> (use the tag <code>rohd</code>) to ask questions or look for answers.</p>
 <p>You also may be interested to join the <a href="https://github.com/intel/rohd/wiki/ROHD-Forum">ROHD Forum</a> periodic meetings with other users and developers in the ROHD community.  The meetings are open to anyone interested!</p>
 <p>Be sure to note the minimum Dart version required for ROHD specified in pubspec.yaml (at least 2.14.0).  If you're using the version of Dart that came with Flutter, it might be older than that.</p>
 <h2 id="package-managers-for-hardware">Package Managers for Hardware</h2>
@@ -185,6 +185,12 @@ x.value.toInt()
 
 // a BigInt
 x.value.toBigInt()
+
+// constructing a LogicValue a handful of different ways
+LogicValue.ofString('0101xz01');                      // 0b0101xz01
+LogicValue.of([LogicValue.one, LogicValue.zero]);     // 0b10
+[LogicValue.z, LogicValue.x].swizzle();               // 0bzx
+LogicValue.ofInt(15, 4);                              // 0xf
 </code></pre>
 <p>You can create <code>LogicValue</code>s using a variety of constructors including <code>ofInt</code>, <code>ofBigInt</code>, <code>filled</code> (like '0, '1, 'x, etc. in SystemVerilog), and <code>of</code> (which takes any <code>Iterable&lt;LogicValue&gt;</code>).</p>
 <h4 id="listening-to-and-waiting-for-changes">Listening to and waiting for changes</h4>
@@ -204,7 +210,8 @@ var x = Const(5, width:16);
 </code></pre>
 <p>There is a convenience function for converting binary to an integer:</p>
 <pre class="language-dart"><code class="language-dart">// this is equvialent to and shorter than int.parse('010101', radix:2)
-bin('010101')
+// you can put underscores to help with readability, they are ignored
+bin('01_0101')
 </code></pre>
 <h3 id="assignment">Assignment</h3>
 <p>To assign one signal to the value of another signal, use the <code>&lt;=</code> operator.  This is a hardware synthesizable assignment connecting two wires together.</p>
@@ -225,6 +232,7 @@ a_plus_b  &lt;=  a + b;   // addition
 a_sub_b   &lt;=  a - b;   // subtraction
 a_times_b &lt;=  a * b;   // multiplication
 a_div_b   &lt;=  a / b;   // division
+a_mod_b   &lt;=  a % b;   // modulo
 a_eq_b    &lt;=  a.eq(b)  // equality              NOTE: == is for Object equality of Logic's
 a_lt_b    &lt;=  a.lt(b)  // less than             NOTE: &lt;  is for conditional assignment
 a_lte_b   &lt;=  a.lte(b) // less than or equal    NOTE: &lt;= is for assignment
@@ -232,13 +240,13 @@ a_gt_b    &lt;=  (a &gt; b)  // greater than          NOTE: careful with order o
 a_gte_b   &lt;=  (a &gt;= b) // greater than or equal NOTE: careful with order of operations, &gt;= needs parentheses in this case
 </code></pre>
 <h3 id="shift-operations">Shift Operations</h3>
-<p>Dart has <a href="https://github.com/dart-lang/language/blob/master/accepted/future-releases/triple-shift-operator/feature-specification.md">implemented the triple shift</a> operator (&gt;&gt;&gt;) in the opposite way as is <a href="https://www.nandland.com/verilog/examples/example-shift-operator-verilog.html">implemented in SystemVerilog</a>.  That is to say in Dart, &gt;&gt;&gt; means <em>logical</em> shift right (fill with 0's), and &gt;&gt; means <em>arithmetic</em> shift right (maintaining sign).  ROHD keeps consistency with Dart's implementation to avoid introducing confusion within Dart code you write (whether ROHD or plain Dart).</p>
+<p>Dart has <a href="https://github.com/dart-lang/language/blob/master/accepted/2.14/triple-shift-operator/feature-specification.md">implemented the triple shift</a> operator (&gt;&gt;&gt;) in the opposite way as is <a href="https://www.nandland.com/verilog/examples/example-shift-operator-verilog.html">implemented in SystemVerilog</a>.  That is to say in Dart, &gt;&gt;&gt; means <em>logical</em> shift right (fill with 0's), and &gt;&gt; means <em>arithmetic</em> shift right (maintaining sign).  ROHD keeps consistency with Dart's implementation to avoid introducing confusion within Dart code you write (whether ROHD or plain Dart).</p>
 <pre class="language-dart"><code class="language-dart">a &lt;&lt; b    // logical shift left
 a &gt;&gt; b    // arithmetic shift right
 a &gt;&gt;&gt; b   // logical shift right
 </code></pre>
 <h3 id="bus-ranges-and-swizzling">Bus ranges and swizzling</h3>
-<p>Multi-bit busses can be accessed by single bits and ranges or composed from multiple other signals.</p>
+<p>Multi-bit busses can be accessed by single bits and ranges or composed from multiple other signals.  Slicing, swizzling, etc. are also accessible on <code>LogicValue</code>s.</p>
 <pre class="language-dart"><code class="language-dart">var a = Logic(width:8),
     b = Logic(width:3),
     c = Const(7, width:5),
@@ -260,7 +268,10 @@ e &lt;= [d, c, b].swizzle();
 // here, the LSB is on the left, the MSB is on the right
 e &lt;= [b, c, d].rswizzle();
 </code></pre>
-<p>ROHD does not (currently) support assignment to a subset of a bus.  That is, you <em>cannot</em> do something like <code>e[3] &lt;= d</code>.  If you need to build a bus from a collection of other signals, use swizzling.</p>
+<p>ROHD does not support assignment to a subset of a bus.  That is, you <em>cannot</em> do something like <code>e[3] &lt;= d</code>.  Instead, you can use the <code>withSet</code> function to get a copy with that subset of the bus assigned to something else.  This applies for both <code>Logic</code> and <code>LogicValue</code>.  For example:</p>
+<pre class="language-dart"><code class="language-dart">// reassign the variable `e` to a new `Logic` where bit 3 is set to `d`
+e = e.withSet(3, d);
+</code></pre>
 <h3 id="modules">Modules</h3>
 <p><a href="https://intel.github.io/rohd/rohd/Module-class.html"><code>Module</code></a>s are similar to modules in SystemVerilog.  They have inputs and outputs and logic that connects them.  There are a handful of rules that <em>must</em> be followed when implementing a module.</p>
 <ol>
@@ -342,7 +353,7 @@ class MyModule extends Module {
 <h3 id="conditionals">Conditionals</h3>
 <p>ROHD supports a variety of <a href="https://intel.github.io/rohd/rohd/Conditional-class.html"><code>Conditional</code></a> type statements that always must fall within a type of <code>_Always</code> block, similar to SystemVerilog.  There are two types of <code>_Always</code> blocks: <a href="https://intel.github.io/rohd/rohd/Sequential-class.html"><code>Sequential</code></a> and <a href="https://intel.github.io/rohd/rohd/Combinational-class.html"><code>Combinational</code></a>, which map to SystemVerilog's <code>always_ff</code> and <code>always_comb</code>, respectively.  <code>Combinational</code> takes a list of <code>Conditional</code> statements.  Different kinds of <code>Conditional</code> statement, such as <code>If</code>, may be composed of more <code>Conditional</code> statements.  You can create <code>Conditional</code> composition chains as deep as you like.</p>
 <p>Conditional statements are executed imperatively and in order, just like the contents of <code>always</code> blocks in SystemVerilog.  <code>_Always</code> blocks in ROHD map 1-to-1 with SystemVerilog <code>always</code> statements when converted.</p>
-<p>Assignments within an <code>_Always</code> should be executed conditionally, so use the <code>&lt;</code> operator which creates a <a href="https://intel.github.io/rohd/rohd/ConditionalAssign-class.html"><code>ConditionalAssign</code></a> object instead of <code>&lt;=</code>.</p>
+<p>Assignments within an <code>_Always</code> should be executed conditionally, so use the <code>&lt;</code> operator which creates a <a href="https://intel.github.io/rohd/rohd/ConditionalAssign-class.html"><code>ConditionalAssign</code></a> object instead of <code>&lt;=</code>.  The right hand side a <code>ConditionalAssign</code> can be anything that can be <code>put</code> onto a <code>Logic</code>, which includes <code>int</code>s.  If you're looking to fill the width of something, use <code>Const</code> with the <code>fill = true</code>.</p>
 <h4 id="if"><code>If</code></h4>
 <p>Below is an example of an <a href="https://intel.github.io/rohd/rohd/If-class.html"><code>If</code></a> statement in ROHD:</p>
 <pre class="language-dart"><code class="language-dart">Combinational([
@@ -357,7 +368,7 @@ class MyModule extends Module {
       q &lt; 13,
   ], orElse: [
       y &lt; 0,
-      z &lt; 1,
+      z &lt; Const(1, width: 4, fill: true),
   ])])
 ]);
 </code></pre>
@@ -567,6 +578,57 @@ var b = pipeline.get(a);
 </code></pre>
 <p>You can also optionally add stalls and reset values for signals in the pipeline.  Any signal not accessed via the <code>PipelineStageInfo</code> object is just accessed as normal, so other logic can optionally sit outside of the pipeline object.</p>
 <p>ROHD also includes a version of <code>Pipeline</code> that supports a ready/valid protocol called <a href="https://intel.github.io/rohd/rohd/ReadyValidPipeline-class.html"><code>ReadyValidPipeline</code></a>.  The syntax looks the same, but has some additional parameters for readys and valids.</p>
+<h3 id="finite-state-machines">Finite State Machines</h3>
+<p>ROHD has a built-in syntax for handling FSMs in a simple &amp; refactorable way.  The below example shows a 2 way Traffic light FSM.  Note that <code>StateMachine</code> consumes the <code>clk</code> and <code>reset</code> signals. Also accepts the reset state to transition to <code>resetState</code> along with the <code>List</code> of <code>states</code> of the FSM.</p>
+<pre class="language-dart"><code class="language-dart">class TrafficTestModule extends Module {
+  TrafficTestModule(Logic traffic, Logic reset) {
+    traffic = addInput('traffic', traffic, width: traffic.width);
+    var northLight = addOutput('northLight', width: traffic.width);
+    var eastLight = addOutput('eastLight', width: traffic.width);
+    var clk = SimpleClockGenerator(10).clk;
+    reset = addInput('reset', reset);
+    var states = [
+      State&lt;LightStates&gt;(LightStates.northFlowing, events: {
+        traffic.eq(Direction.noTraffic()): LightStates.northFlowing,
+        traffic.eq(Direction.northTraffic()): LightStates.northFlowing,
+        traffic.eq(Direction.eastTraffic()): LightStates.northSlowing,
+        traffic.eq(Direction.both()): LightStates.northSlowing,
+      }, actions: [
+        northLight &lt; LightColor.green(),
+        eastLight &lt; LightColor.red(),
+      ]),
+      State&lt;LightStates&gt;(LightStates.northSlowing, events: {
+        traffic.eq(Direction.noTraffic()): LightStates.eastFlowing,
+        traffic.eq(Direction.northTraffic()): LightStates.eastFlowing,
+        traffic.eq(Direction.eastTraffic()): LightStates.eastFlowing,
+        traffic.eq(Direction.both()): LightStates.eastFlowing,
+      }, actions: [
+        northLight &lt; LightColor.yellow(),
+        eastLight &lt; LightColor.red(),
+      ]),
+      State&lt;LightStates&gt;(LightStates.eastFlowing, events: {
+        traffic.eq(Direction.noTraffic()): LightStates.eastSlowing,
+        traffic.eq(Direction.northTraffic()): LightStates.eastSlowing,
+        traffic.eq(Direction.eastTraffic()): LightStates.eastFlowing,
+        traffic.eq(Direction.both()): LightStates.eastSlowing,
+      }, actions: [
+        northLight &lt; LightColor.red(),
+        eastLight &lt; LightColor.green(),
+      ]),
+      State&lt;LightStates&gt;(LightStates.eastSlowing, events: {
+        traffic.eq(Direction.noTraffic()): LightStates.northFlowing,
+        traffic.eq(Direction.northTraffic()): LightStates.northFlowing,
+        traffic.eq(Direction.eastTraffic()): LightStates.northFlowing,
+        traffic.eq(Direction.both()): LightStates.northFlowing,
+      }, actions: [
+        northLight &lt; LightColor.red(),
+        eastLight &lt; LightColor.yellow(),
+      ]),
+    ];
+    StateMachine&lt;LightStates&gt;(clk, reset, LightStates.northFlowing, states);
+  }
+}
+</code></pre>
 <h2 id="rohd-simulator">ROHD Simulator</h2>
 <p>The ROHD simulator is a static class accessible as <a href="https://intel.github.io/rohd/rohd/Simulator-class.html"><code>Simulator</code></a> which implements a simple event-based simulator.  All <code>Logic</code>s in Dart have <code>glitch</code> events which propogate values to connected <code>Logic</code>s downstream.  In this way, ROHD propogates values across the entire graph representation of the hardware (without any <code>Simulator</code> involvement required).  The simulator has a concept of (unitless) time, and arbitrary Dart functions can be registered to occur at arbitraty times in the simulator.  Asking the simulator to run causes it to iterate through all registered timestamps and execute the functions in chronological order.  When these functions deposit signals on <code>Logic</code>s, it propogates values across the hardware.  The simulator has a number of events surrounding execution of a timestamp tick so that things like <code>FlipFlop</code>s can know when clocks and signals are glitch-free.</p>
 <ul>
@@ -618,7 +680,7 @@ var b = pipeline.get(a);
 <h3 id="chisel">Chisel</h3>
 <p>Chisel is a domain specific language (DSL) built on top of <a href="https://www.scala-lang.org/">Scala</a>, which is built on top of the Java virtual machine (JVM).  The goals of Chisel are somewhat aligned with the goals of ROHD.  Chisel can also convert to SystemVerilog.</p>
 <ul>
-<li>The syntax of Scala (and thus Chisel) is probably less familiar-feeling to most hardware engineers, and is arguably more verbose and subjectively uglier than ROHD with Dart.</li>
+<li>The syntax of Scala (and thus Chisel) is probably less familiar-feeling to most hardware engineers, and it can be more verbose than ROHD with Dart.</li>
 <li>Scala and the JVM are arguably less user friendly to debug than Dart code.</li>
 <li>Chisel is focused mostly on the hardware <em>designer</em> rather than the <em>validator</em>.  Many of the design choices for the language are centered around making it easier to parameterize and synthesize logic.  ROHD was created with validators in mind.</li>
 <li>Chisel generates logic that's closer to a netlist than what a similar implementation in SystemVerilog would look like.  This can make it difficult to debug or validate generated code.  ROHD generates structurally similar SystemVerilog that looks close to how you might write it.</li>
@@ -673,7 +735,7 @@ SPDX-License-Identifier: BSD-3-Clause</p>
 
 </dt>
 <dd>Copyright (C) 2021-2022 Intel Corporation
-SPDX-License-Identifier: BSD-3-Clause 
+SPDX-License-Identifier: BSD-3-Clause
 </dd>
 
         </dl>
@@ -709,7 +771,7 @@ SPDX-License-Identifier: BSD-3-Clause
 <footer>
   <span class="no-break">
     rohd
-      0.2.0
+      0.3.2
   </span>
 
   
@@ -718,7 +780,7 @@ SPDX-License-Identifier: BSD-3-Clause
 
 
 <script src="static-assets/highlight.pack.js?v1"></script>
-<script src="static-assets/script.js?v1"></script>
+<script src="static-assets/docs.dart.js"></script>
 
 
 
